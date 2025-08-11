@@ -1,6 +1,7 @@
 // color quantization, based on Leptonica
-import Core from "./core";
-import type { ColorArray, PaletteOptions } from "./type";
+import Core from './core';
+import arrayToHex from './utils/arrayToHex';
+import type { ColorArray, PaletteOptions } from './type';
 
 /**
  *
@@ -34,8 +35,8 @@ class CanvasImage {
   height: number;
 
   constructor(image: HTMLImageElement) {
-    this.canvas = document.createElement("canvas");
-    this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.canvas = document.createElement('canvas');
+    this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.width = this.canvas.width = image.naturalWidth;
     this.height = this.canvas.height = image.naturalHeight;
     this.context.drawImage(image, 0, 0, this.width, this.height);
@@ -55,7 +56,7 @@ class ColorThief extends Core {
   }
 
   private async asyncFetchImage(imageUrl: string) {
-    const imageSource = await fetch(imageUrl, { mode: "cors" })
+    const imageSource = await fetch(imageUrl, { mode: 'cors' })
       .then((response) => {
         // Check if the request was successful
         if (response.ok) {
@@ -70,9 +71,9 @@ class ColorThief extends Core {
         if (blob === null) {
           return null;
         }
-        const img = document.createElement("img");
+        const img = document.createElement('img');
         if (this.crossOrigin) {
-          img.crossOrigin = "anonymous";
+          img.crossOrigin = 'anonymous';
         }
         img.src = URL.createObjectURL(blob);
         return img;
@@ -120,13 +121,13 @@ class ColorThief extends Core {
   public getPalette(
     sourceImage: HTMLImageElement,
     colorCount: number,
-    opts?: PaletteOptions<"array">
+    opts?: PaletteOptions<'array'>
   ): ColorArray[];
 
   public getPalette(
     sourceImage: HTMLImageElement,
     colorCount: number,
-    opts?: PaletteOptions<"hex">
+    opts?: PaletteOptions<'hex'>
   ): string[];
 
   public getPalette(
@@ -153,12 +154,12 @@ class ColorThief extends Core {
    * */
   public getColor(
     sourceImage: HTMLImageElement,
-    opts?: PaletteOptions<"array">
+    opts?: PaletteOptions<'array'>
   ): ColorArray;
 
   public getColor(
     sourceImage: HTMLImageElement,
-    opts?: PaletteOptions<"hex">
+    opts?: PaletteOptions<'hex'>
   ): string;
 
   public getColor(sourceImage: HTMLImageElement, opts?: PaletteOptions) {
@@ -169,13 +170,13 @@ class ColorThief extends Core {
   public getPaletteAsync(
     imageUrl: string,
     colorCount: number,
-    opts?: PaletteOptions<"array">
+    opts?: PaletteOptions<'array'>
   ): Promise<ColorArray[] | null>;
 
   public getPaletteAsync(
     imageUrl: string,
     colorCount: number,
-    opts?: PaletteOptions<"hex">
+    opts?: PaletteOptions<'hex'>
   ): Promise<string[] | null>;
 
   public getPaletteAsync(
@@ -184,66 +185,79 @@ class ColorThief extends Core {
     opts?: PaletteOptions
   ) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
+    const colorType = opts?.colorType ?? 'hex';
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
         return null;
       }
 
-      return this.getPalette(sourceImage, colorCount, {
-        quality,
-        colorType: opts?.colorType,
-      });
+      const palette =
+        colorType === 'hex'
+          ? this.getPalette(sourceImage, colorCount, {
+              quality,
+              colorType: 'hex',
+            })
+          : this.getPalette(sourceImage, colorCount, {
+              quality,
+              colorType: 'array',
+            });
 
       if (palette.length === 0) {
         return null;
       }
 
-      if (colorType === "hex") {
-        return palette.map((item) => arrayToHex(item));
+      if (colorType === 'hex') {
+        return palette.map((item) =>
+          arrayToHex(item as ColorArray)
+        ) as string[];
       }
 
-      return palette;
-
+      return palette as ColorArray[];
     });
   }
 
   public getColorAsync(
     imageUrl: string,
-    opts?: PaletteOptions<"array">
+    opts?: PaletteOptions<'array'>
   ): Promise<ColorArray | null>;
 
   public getColorAsync(
     imageUrl: string,
-    opts?: PaletteOptions<"hex">
+    opts?: PaletteOptions<'hex'>
   ): Promise<string | null>;
 
   public getColorAsync(imageUrl: string, opts?: PaletteOptions) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
+    const colorType = opts?.colorType ?? 'hex';
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
         return null;
       }
 
-      return this.getColor(sourceImage, {
-        quality,
-        colorType: opts?.colorType,
-      });
+      let dominantColor;
+      if (colorType === 'hex') {
+        dominantColor = this.getColor(sourceImage, {
+          quality,
+          colorType: 'hex',
+        });
+      } else {
+        dominantColor = this.getColor(sourceImage, {
+          quality,
+          colorType: 'array',
+        });
+      }
 
-
-      if (palette.length === 0) {
+      if (!dominantColor) {
         return null;
       }
 
-      const dominantColor = palette[0];
-
-      if (colorType === "hex") {
-        return arrayToHex(dominantColor);
+      if (colorType === 'hex') {
+        return arrayToHex(dominantColor as ColorArray);
       }
 
-      return dominantColor;
-
+      return dominantColor as ColorArray;
     });
   }
 }
