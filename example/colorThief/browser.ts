@@ -194,13 +194,13 @@ class ColorThief extends Core {
     imageUrl: string,
     colorCount: number,
     opts?: PaletteOptions<"array">
-  ): Promise<ColorArray[]>;
+  ): Promise<ColorArray[] | null>;
 
   public getPaletteAsync(
     imageUrl: string,
     colorCount: number,
     opts?: PaletteOptions<"hex">
-  ): Promise<string[]>;
+  ): Promise<string[] | null>;
 
   public getPaletteAsync(
     imageUrl: string,
@@ -212,7 +212,7 @@ class ColorThief extends Core {
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+        return null;
       }
 
       const palette = this.getPalette(sourceImage, colorCount, {
@@ -220,8 +220,8 @@ class ColorThief extends Core {
         colorType: "array",
       });
 
-      if (palette === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+      if (palette.length === 0) {
+        return null;
       }
 
       if (colorType === "hex") {
@@ -235,12 +235,12 @@ class ColorThief extends Core {
   public getColorAsync(
     imageUrl: string,
     opts?: PaletteOptions<"array">
-  ): Promise<ColorArray>;
+  ): Promise<ColorArray | null>;
 
   public getColorAsync(
     imageUrl: string,
     opts?: PaletteOptions<"hex">
-  ): Promise<string>;
+  ): Promise<string | null>;
 
   public getColorAsync(imageUrl: string, opts?: PaletteOptions) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
@@ -248,7 +248,7 @@ class ColorThief extends Core {
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+        return null;
       }
 
       const palette = this.getPalette(sourceImage, 5, {
@@ -256,8 +256,8 @@ class ColorThief extends Core {
         colorType: "array",
       });
 
-      if (palette === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+      if (palette.length === 0) {
+        return null;
       }
 
       const dominantColor = palette[0];
