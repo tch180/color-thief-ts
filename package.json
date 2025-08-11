@@ -36,11 +36,8 @@
     "build": "yarn  build:browser && yarn build:node",
     "build:browser": "tsup src/browser.ts --format esm,cjs --dts",
     "build:node": "tsup src/node.ts --format esm,cjs --dts",
-
-    "test": "node --test"
-
+    "test": "node --test",
     "test2": "node --test test/core.test.cjs"
-
   },
   "repository": {
     "type": "git",
@@ -65,7 +62,7 @@
     "quantize": "^1.0.2"
   },
   "devDependencies": {
-    "tsup": "^6.5.0",
-    "typescript": "^4.9.4"
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.4"
   }
 }
