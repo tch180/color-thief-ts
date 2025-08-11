@@ -1,10 +1,10 @@
 # Color Thief
 
-Grab the color palette from an image using just Javascript.Works in the browser & node.
+Grab the color palette from an image using just JavaScript. Works in the browser & Node.js.
 
 ## Getting Started
 
-### install
+### Install
 ```
 yarn add color-thief-ts
 ```
@@ -13,14 +13,14 @@ or
 npm install color-thief-ts
 ```
 
-### example for browser
+### Example for browser
 
 ``` javascript
 import ColorThief from "color-thief-ts";
 
 const colorThief = new ColorThief();
-const dominantColor = await colorThief.getColorAsync("your-domaon/your-image-url.jpg");
-const palette = await colorThief.getPaletteAsync("your-domaon/your-image-url.jpg", 5);
+const dominantColor = await colorThief.getColorAsync("your-domain/your-image-url.jpg");
+const palette = await colorThief.getPaletteAsync("your-domain/your-image-url.jpg", 5);
 
 if (dominantColor) {
   console.log(dominantColor);
@@ -31,7 +31,7 @@ if (palette) {
 }
 ```
 
-### example for node.js
+### Example for Node.js
 
 ``` javascript
 import ColorThief from "color-thief-ts/node";
