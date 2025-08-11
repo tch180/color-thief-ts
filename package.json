@@ -13,13 +13,19 @@
   "types": "./dist/browser.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/browser.d.ts",
       "import": "./dist/browser.mjs",
-      "require": "./dist/browser.js",
-      "node": "./dist/node.js"
+      "require": "./dist/browser.js"
     },
     "./node": {
+      "types": "./dist/node.d.ts",
       "import": "./dist/node.mjs",
       "require": "./dist/node.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.mjs",
+      "require": "./dist/browser.js"
     }
   },
   "typesVersions": {
@@ -33,16 +39,12 @@
     }
   },
   "scripts": {
-    "build": "yarn  build:browser && yarn build:node",
+    "build": "npm run build:browser && npm run build:node",
     "build:browser": "tsup src/browser.ts --format esm,cjs --dts",
     "build:node": "tsup src/node.ts --format esm,cjs --dts",
     "test": "node --test",
-    "test2": "node --test test/core.test.cjs"
-
-
+    "test2": "node --test test/core.test.cjs",
     "test3": "vitest run"
-
-
   },
   "repository": {
     "type": "git",
@@ -63,12 +65,14 @@
   },
   "homepage": "https://github.com/wh5938316/color-thief-ts#readme",
   "dependencies": {
-    "get-pixels": "^3.3.3",
+    "jimp": "^0.22.12",
     "quantize": "^1.0.2"
   },
   "devDependencies": {
+    "@types/jimp": "^0.2.1",
+    "@types/node": "^22.0.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.4"
-      "vitest": "^1.0.0"
+    "typescript": "^5.5.4",
+    "vitest": "^3.2.4"
   }
 }
