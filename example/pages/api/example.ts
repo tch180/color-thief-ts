@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import ColorThief from "color-thief-ts/node";
+import ColorThief from "color-thief-ts";
 import type { NextApiRequest, NextApiResponse } from "next";
 import fetch from "node-fetch";
 
