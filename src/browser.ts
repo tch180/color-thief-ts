@@ -48,7 +48,7 @@ class CanvasImage {
 }
 
 class ColorThief extends Core {
-  private crossOrigin: Boolean;
+  private crossOrigin: boolean;
 
   constructor(opts?: { crossOrigin: boolean }) {
     super();
@@ -56,13 +56,8 @@ class ColorThief extends Core {
   }
 
   private async asyncFetchImage(imageUrl: string) {
-    const imageSource = await fetch(imageUrl, {
-      method: "GET",
-      headers: this.crossOrigin
-        ? { "Access-Control-Allow-Origin": "*" }
-        : undefined,
-    })
-      .then(function (response) {
+    const imageSource = await fetch(imageUrl, { mode: "cors" })
+      .then((response) => {
         // Check if the request was successful
         if (response.ok) {
           // Convert the response to a blob (binary data)
@@ -71,13 +66,19 @@ class ColorThief extends Core {
 
         return null;
       })
-      .then(function (blob) {
+      .then((blob) => {
         // Create an image element from the blob data
+        if (blob === null) {
+          return null;
+        }
         const img = document.createElement("img");
-        img.src = URL.createObjectURL(blob as Blob);
+        if (this.crossOrigin) {
+          img.crossOrigin = "anonymous";
+        }
+        img.src = URL.createObjectURL(blob);
         return img;
       })
-      .catch(function (error) {
+      .catch(() => {
         // Handle any errors
         return null;
       });
