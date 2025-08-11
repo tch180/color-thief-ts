@@ -22,8 +22,13 @@ const colorThief = new ColorThief();
 const dominantColor = await colorThief.getColorAsync("your-domaon/your-image-url.jpg");
 const palette = await colorThief.getPaletteAsync("your-domaon/your-image-url.jpg", 5);
 
-console.log(dominantColor);
-console.log(palette);
+if (dominantColor) {
+  console.log(dominantColor);
+}
+
+if (palette) {
+  console.log(palette);
+}
 ```
 
 ### example for node.js

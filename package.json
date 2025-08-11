@@ -36,7 +36,11 @@
     "build": "yarn  build:browser && yarn build:node",
     "build:browser": "tsup src/browser.ts --format esm,cjs --dts",
     "build:node": "tsup src/node.ts --format esm,cjs --dts",
-    "test": "node --test test/core.test.cjs"
+
+    "test": "node --test"
+
+    "test2": "node --test test/core.test.cjs"
+
   },
   "repository": {
     "type": "git",

@@ -170,13 +170,13 @@ class ColorThief extends Core {
     imageUrl: string,
     colorCount: number,
     opts?: PaletteOptions<"array">
-  ): Promise<ColorArray[]>;
+  ): Promise<ColorArray[] | null>;
 
   public getPaletteAsync(
     imageUrl: string,
     colorCount: number,
     opts?: PaletteOptions<"hex">
-  ): Promise<string[]>;
+  ): Promise<string[] | null>;
 
   public getPaletteAsync(
     imageUrl: string,
@@ -187,38 +187,63 @@ class ColorThief extends Core {
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+        return null;
       }
 
       return this.getPalette(sourceImage, colorCount, {
         quality,
         colorType: opts?.colorType,
       });
+
+      if (palette.length === 0) {
+        return null;
+      }
+
+      if (colorType === "hex") {
+        return palette.map((item) => arrayToHex(item));
+      }
+
+      return palette;
+
     });
   }
 
   public getColorAsync(
     imageUrl: string,
     opts?: PaletteOptions<"array">
-  ): Promise<ColorArray>;
+  ): Promise<ColorArray | null>;
 
   public getColorAsync(
     imageUrl: string,
     opts?: PaletteOptions<"hex">
-  ): Promise<string>;
+  ): Promise<string | null>;
 
   public getColorAsync(imageUrl: string, opts?: PaletteOptions) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
-        return { dominantColor: null, palette: [], image: sourceImage };
+        return null;
       }
 
       return this.getColor(sourceImage, {
         quality,
         colorType: opts?.colorType,
       });
+
+
+      if (palette.length === 0) {
+        return null;
+      }
+
+      const dominantColor = palette[0];
+
+      if (colorType === "hex") {
+        return arrayToHex(dominantColor);
+      }
+
+      return dominantColor;
+
     });
   }
 }
