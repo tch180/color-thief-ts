@@ -38,6 +38,11 @@
     "build:node": "tsup src/node.ts --format esm,cjs --dts",
     "test": "node --test",
     "test2": "node --test test/core.test.cjs"
+
+
+    "test3": "vitest run"
+
+
   },
   "repository": {
     "type": "git",
@@ -64,5 +69,8 @@
   "devDependencies": {
     "tsup": "^8.1.0",
     "typescript": "^5.5.4"
+      "vitest": "^1.0.0"
+
+
   }
 }
