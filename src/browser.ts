@@ -1,7 +1,6 @@
 // color quantization, based on Leptonica
 import Core from "./core";
 import type { ColorArray, PaletteOptions } from "./type";
-import arrayToHex from "./utils/arrayToHex";
 
 /**
  *
@@ -135,17 +134,8 @@ class ColorThief extends Core {
     colorCount: number,
     opts?: PaletteOptions
   ) {
-    const colorType = opts?.colorType ?? "hex";
-
     const [imageData, pixelCount] = this.getImageData(sourceImage);
-
-    const palette = this._getPalette(imageData, pixelCount, colorCount, opts);
-
-    if (colorType === "hex") {
-      return palette.map((item) => arrayToHex(item));
-    }
-
-    return palette;
+    return this._getPalette(imageData, pixelCount, colorCount, opts);
   }
 
   /*
@@ -172,23 +162,8 @@ class ColorThief extends Core {
   ): string;
 
   public getColor(sourceImage: HTMLImageElement, opts?: PaletteOptions) {
-    const colorType = opts?.colorType ?? "hex";
-
-    const palette = this.getPalette(sourceImage, 5, {
-      quality: opts?.quality ?? DEFAULT_QUALITY,
-      colorType: "array",
-    });
-    const dominantColor = palette?.[0] ?? null;
-
-    if (dominantColor === null) {
-      return dominantColor;
-    }
-
-    if (colorType === "hex") {
-      return arrayToHex(dominantColor);
-    }
-
-    return dominantColor;
+    const [imageData, pixelCount] = this.getImageData(sourceImage);
+    return this._getColor(imageData, pixelCount, opts);
   }
 
   public getPaletteAsync(
@@ -209,16 +184,15 @@ class ColorThief extends Core {
     opts?: PaletteOptions
   ) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
-    const colorType = opts?.colorType ?? "hex";
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
         return null;
       }
 
-      const palette = this.getPalette(sourceImage, colorCount, {
+      return this.getPalette(sourceImage, colorCount, {
         quality,
-        colorType: "array",
+        colorType: opts?.colorType,
       });
 
       if (palette.length === 0) {
@@ -230,6 +204,7 @@ class ColorThief extends Core {
       }
 
       return palette;
+
     });
   }
 
@@ -245,17 +220,17 @@ class ColorThief extends Core {
 
   public getColorAsync(imageUrl: string, opts?: PaletteOptions) {
     const quality = opts?.quality ?? DEFAULT_QUALITY;
-    const colorType = opts?.colorType ?? "hex";
 
     return this.asyncFetchImage(imageUrl).then((sourceImage) => {
       if (sourceImage === null) {
         return null;
       }
 
-      const palette = this.getPalette(sourceImage, 5, {
+      return this.getColor(sourceImage, {
         quality,
-        colorType: "array",
+        colorType: opts?.colorType,
       });
+
 
       if (palette.length === 0) {
         return null;
@@ -268,6 +243,7 @@ class ColorThief extends Core {
       }
 
       return dominantColor;
+
     });
   }
 }
